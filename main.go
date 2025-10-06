@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
 func main() {
-	boardSize := 15
+	var boardSize int
+	fmt.Println("Введи размер доски")
+	fmt.Fscan(os.Stdin, &boardSize)
 	ChessBoard := strings.Builder{}
 	for i := 0; i < boardSize; i++ {
 		switch i % 2 {
