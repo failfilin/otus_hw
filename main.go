@@ -1,50 +1,33 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"strings"
+	"otus/internal/models"
+
+	"github.com/google/uuid"
 )
 
 func main() {
-	var boardSize int
-	fmt.Println("Введи размер доски")
-	fmt.Fscan(os.Stdin, &boardSize)
-	ChessBoard := strings.Builder{}
-	for i := 0; i < boardSize; i++ {
-		switch i % 2 {
-		case 0:
-			ChessBoard.WriteString(chessboardLineGeneretor(boardSize, 0))
-		case 1:
-			ChessBoard.WriteString(chessboardLineGeneretor(boardSize, 1))
-		}
-	}
-	fmt.Println(ChessBoard.String())
-}
+	rest := models.Restaurant{
+		Id:   uuid.New(),
+		Name: "Веселые истории",
+		Logo: "Когда нить будет ссылка"}
+	firstMenu := models.Menu{
+		Id:           uuid.New(),
+		RestaurantId: rest.Id,
+		Description:  "Первая тестовая менюха",
+		Active:       true}
+	firstDish := models.Dish{
+		Id:       1,
+		MenuID:   firstMenu.Id,
+		Name:     "Веселая похлебка",
+		Compound: "Остатки со столоа 1 шт",
+		Macros:   models.Macros{Calories: 150.0, Proteins: 2.0, Fats: 4.0, Carbohydrates: 5.0},
+		Price:    200.0}
 
-func chessboardLineGeneretor(size int, startType int) string { // количество элементов в линии и тип первого элемента 0 - пробел 1 - решетка
-	space := " " // подменил на пробел для простоты визуала
-	lattice := "#"
-	boardline := strings.Builder{}
-	if startType == 0 {
-		for i := 0; i < size; i++ {
-			switch i % 2 {
-			case 0:
-				boardline.WriteString(space)
-			case 1:
-				boardline.WriteString(lattice)
-			}
-		}
-	} else {
-		for i := 0; i < size; i++ {
-			switch i % 2 {
-			case 0:
-				boardline.WriteString(lattice)
-			case 1:
-				boardline.WriteString(space)
-			}
-		}
-	}
-	boardline.WriteString("\n")
-	return boardline.String()
+	rest.MenuList = append(rest.MenuList, firstMenu)
+	firstMenu.DishList = append(firstMenu.DishList, firstDish)
+	rest.ShowDetais()
+	rest.ChangeActive()
+	rest.ShowDetais()
+	firstMenu.ShowDetais()
 }
