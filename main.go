@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"otus/internal/models"
 
 	"github.com/google/uuid"
@@ -20,14 +21,23 @@ func main() {
 		Id:       1,
 		MenuID:   firstMenu.Id,
 		Name:     "Веселая похлебка",
-		Compound: "Остатки со столоа 1 шт",
+		Compound: "Остатки со стола 1 шт",
 		Macros:   models.Macros{Calories: 150.0, Proteins: 2.0, Fats: 4.0, Carbohydrates: 5.0},
 		Price:    200.0}
-
+	secondDish := models.Dish{
+		Id:       1,
+		MenuID:   firstMenu.Id,
+		Name:     "Жгучий вупсень",
+		Compound: "Остатки со стола 1 шт, Ложка адской остроты 2 шт",
+		Macros:   models.Macros{Calories: 150.0, Proteins: 2.0, Fats: 4.0, Carbohydrates: 5.0},
+		Price:    200.0}
 	rest.MenuList = append(rest.MenuList, firstMenu)
 	firstMenu.DishList = append(firstMenu.DishList, firstDish)
-	rest.ShowDetais()
+	firstMenu.DishList = append(firstMenu.DishList, secondDish)
+	fmt.Println(rest)
+	fmt.Println("--------------------------")
 	rest.ChangeActive()
-	rest.ShowDetais()
-	firstMenu.ShowDetais()
+	fmt.Println(rest)
+	fmt.Println("--------------------------")
+	fmt.Println(firstMenu)
 }

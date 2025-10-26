@@ -14,10 +14,6 @@ type Menu struct {
 	DishList     []Dish
 }
 
-func (menu *Menu) ShowDetais() {
-	fmt.Println("ID меню", menu.Id)
-	fmt.Println("Id ресторана", menu.RestaurantId)
-	fmt.Println("Описание", menu.Description)
-	fmt.Println("Список блюд", menu.DishList)
-	fmt.Println("Статус активности меню", menu.Active)
+func (menu Menu) String() string {
+	return fmt.Sprintf("ID меню: %v\nId ресторана: %v\nОписание: %v\nСписок блюд: %v\nСтатус активности меню:%t", menu.Id, menu.RestaurantId, menu.Description, menu.DishList, menu.Active)
 }
