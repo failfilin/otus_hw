@@ -27,10 +27,6 @@ func (res *Restaurant) GetActive() bool {
 	return res.active
 }
 
-func (res *Restaurant) ShowDetais() {
-	fmt.Println("ID заведения", res.Id)
-	fmt.Println("Название", res.Name)
-	fmt.Println("Ссыль на лого", res.Logo)
-	fmt.Println("Список менюшек", res.MenuList)
-	fmt.Println("Статус активности заведения", res.GetActive())
+func (res Restaurant) String() string {
+	return fmt.Sprintf("ID заведения: %v \nНазвание: %v \nСсыль на лого: %v \nСписок менюшек: %v \nСтатус активности заведения: %t", res.Id, res.Name, res.Logo, res.MenuList, res.GetActive())
 }

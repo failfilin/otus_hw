@@ -1,6 +1,10 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+)
 
 type Dish struct {
 	Id       int
@@ -17,4 +21,8 @@ type Macros struct {
 	Proteins      float32
 	Fats          float32
 	Carbohydrates float32
+}
+
+func (dish Dish) String() string {
+	return fmt.Sprintf(dish.Name)
 }
