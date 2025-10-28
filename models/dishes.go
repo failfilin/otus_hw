@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/google/uuid"
 )
@@ -25,4 +26,8 @@ type Macros struct {
 
 func (dish Dish) String() string {
 	return fmt.Sprintf(dish.Name)
+}
+
+func (dish Dish) GenerateNewOne() EatType {
+	return Dish{Id: rand.Intn(9999)}
 }
