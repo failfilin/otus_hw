@@ -1,5 +1,5 @@
 package models
 
 type EatType interface {
-	GenerateNewOne() EatType
+	AddToSlice(slice *[]EatType)
 }
