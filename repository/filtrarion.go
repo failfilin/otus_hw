@@ -7,11 +7,11 @@ import (
 func AddSlice(i models.EatType, dishSlice *[]models.EatType, menuSlice *[]models.EatType, restSlice *[]models.EatType) {
 	switch i.(type) {
 	case models.Restaurant:
-		*restSlice = append(*restSlice, i)
+		i.AddToSlice(restSlice)
 	case models.Menu:
-		*menuSlice = append(*menuSlice, i)
+		i.AddToSlice(menuSlice)
 	case models.Dish:
-		*dishSlice = append(*dishSlice, i)
+		i.AddToSlice(dishSlice)
 	}
 
 }
