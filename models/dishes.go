@@ -26,7 +26,3 @@ type Macros struct {
 func (dish Dish) String() string {
 	return fmt.Sprintf(dish.Name)
 }
-
-func (dish Dish) AddToSlice(slice *[]EatType) {
-	*slice = append(*slice, dish)
-}

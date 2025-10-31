@@ -4,14 +4,18 @@ import (
 	"otus/models"
 )
 
-func AddSlice(i models.EatType, dishSlice *[]models.EatType, menuSlice *[]models.EatType, restSlice *[]models.EatType) {
-	switch i.(type) {
+var RestSlice []models.Restaurant
+var MenuSlice []models.Menu
+var DishSlice []models.Dish
+
+func AddSlice(i models.EatType) {
+	switch v := i.(type) {
 	case models.Restaurant:
-		i.AddToSlice(restSlice)
+		RestSlice = append(RestSlice, v)
 	case models.Menu:
-		i.AddToSlice(menuSlice)
+		MenuSlice = append(MenuSlice, v)
 	case models.Dish:
-		i.AddToSlice(dishSlice)
+		DishSlice = append(DishSlice, v)
 	}
 
 }

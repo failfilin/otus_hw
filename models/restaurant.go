@@ -31,6 +31,8 @@ func (res Restaurant) String() string {
 	return fmt.Sprintf("ID заведения: %v \nНазвание: %v \nСсыль на лого: %v \nСписок менюшек: %v \nСтатус активности заведения: %t", res.Id, res.Name, res.Logo, res.MenuList, res.GetActive())
 }
 
-func (res Restaurant) AddToSlice(slice *[]EatType) {
-	*slice = append(*slice, res)
+/*
+func (res Restaurant) AddToSlice(slice []EatType) {
+	slice = append(slice, res)
 }
+*/
