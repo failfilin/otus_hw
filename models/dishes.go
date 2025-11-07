@@ -24,5 +24,5 @@ type Macros struct {
 }
 
 func (dish Dish) String() string {
-	return fmt.Sprintf(dish.Name)
+	return fmt.Sprintf("%v", dish.Id)
 }

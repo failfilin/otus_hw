@@ -15,5 +15,6 @@ type Menu struct {
 }
 
 func (menu Menu) String() string {
-	return fmt.Sprintf("ID меню: %v\nId ресторана: %v\nОписание: %v\nСписок блюд: %v\nСтатус активности меню:%t", menu.Id, menu.RestaurantId, menu.Description, menu.DishList, menu.Active)
+	//return fmt.Sprintf("ID меню: %v\nId ресторана: %v\nОписание: %v\nСписок блюд: %v\nСтатус активности меню:%t", menu.Id, menu.RestaurantId, menu.Description, menu.DishList, menu.Active)
+	return fmt.Sprintf("%v", menu.Id)
 }
