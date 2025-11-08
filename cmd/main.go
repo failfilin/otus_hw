@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"otus/models"
-	"otus/repository"
 	"otus/service"
 	"sync"
 )
@@ -21,9 +20,9 @@ func main() {
 	fmt.Println("Введи количество итераций")
 	fmt.Fscan(os.Stdin, &count)
 	wgConsume.Add(1)
-	go repository.AddSlice(channel, doneChannel, &wgConsume)
+	go service.NewEventConsumer(channel, doneChannel, &wgConsume)
 	wgLogger.Add(1)
-	go repository.Logger(doneChannel, &wgLogger)
+	go service.Logger(doneChannel, &wgLogger)
 	for i := count; i > 0; i-- {
 		wgProduce.Add(1)
 		go service.GenerateModels(channel, &wgProduce)
