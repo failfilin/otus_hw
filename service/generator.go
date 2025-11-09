@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"math/rand"
 	"otus/models"
 	"sync"
@@ -8,14 +9,20 @@ import (
 	"github.com/google/uuid"
 )
 
-func GenerateModels(EatTypeChannel chan models.EatType, wg *sync.WaitGroup) {
+func GenerateModels(ctx context.Context, EatTypeChannel chan models.EatType, wg *sync.WaitGroup) {
 	defer wg.Done()
-	switch i := rand.Intn(3); i {
-	case 0:
-		EatTypeChannel <- models.Dish{Id: rand.Intn(9999)}
-	case 1:
-		EatTypeChannel <- models.Menu{Id: uuid.New()}
+
+	select {
+	case <-ctx.Done():
+		return
 	default:
-		EatTypeChannel <- models.Restaurant{Id: uuid.New()}
+		switch i := rand.Intn(3); i {
+		case 0:
+			EatTypeChannel <- models.Dish{Id: rand.Intn(9999)}
+		case 1:
+			EatTypeChannel <- models.Menu{Id: uuid.New()}
+		default:
+			EatTypeChannel <- models.Restaurant{Id: uuid.New()}
+		}
 	}
 }

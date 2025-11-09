@@ -1,31 +1,42 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
 	"otus/models"
 	"otus/service"
 	"sync"
+	"syscall"
 )
 
 func main() {
-
 	var count int
-	var wgProduce sync.WaitGroup
-	var wgConsume sync.WaitGroup
-	var wgLogger sync.WaitGroup
+	var wgProduce, wgConsume, wgLogger sync.WaitGroup
+
 	channel := make(chan models.EatType)
 	doneChannel := make(chan struct{})
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 
 	fmt.Println("Введи количество итераций")
 	fmt.Fscan(os.Stdin, &count)
 	wgConsume.Add(1)
-	go service.NewEventConsumer(channel, doneChannel, &wgConsume)
+	go service.NewEventConsumer(ctx, channel, doneChannel, &wgConsume)
 	wgLogger.Add(1)
-	go service.Logger(doneChannel, &wgLogger)
+	go service.Logger(ctx, doneChannel, &wgLogger)
 	for i := count; i > 0; i-- {
-		wgProduce.Add(1)
-		go service.GenerateModels(channel, &wgProduce)
+		select {
+		case <-ctx.Done():
+		default:
+			wgProduce.Add(1)
+			go service.GenerateModels(ctx, channel, &wgProduce)
+		}
+		if ctx.Err() != nil {
+			break
+		}
+
 	}
 	wgProduce.Wait()
 	close(channel)

@@ -1,13 +1,14 @@
 package service
 
 import (
+	"context"
 	"log"
 	"otus/repository"
 	"sync"
 	"time"
 )
 
-func Logger(done <-chan struct{}, wg *sync.WaitGroup) {
+func Logger(ctx context.Context, done <-chan struct{}, wg *sync.WaitGroup) {
 	defer wg.Done()
 	restState := 0
 	dishState := 0
@@ -18,6 +19,8 @@ func Logger(done <-chan struct{}, wg *sync.WaitGroup) {
 
 	for {
 		select {
+		case <-ctx.Done():
+			return
 		case <-done:
 			// Финальный лог по завершении
 			log.Println("Финальное срабатывание")
