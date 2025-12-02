@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/failfilin/otus_hw/repository"
+	"github.com/failfilin/otus_hw/internal/repository"
 )
 
 func Logger(ctx context.Context, done <-chan struct{}, wg *sync.WaitGroup) {

@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"sync"
 
-	"github.com/failfilin/otus_hw/models"
+	"github.com/failfilin/otus_hw/internal/models"
 
 	"github.com/google/uuid"
 )

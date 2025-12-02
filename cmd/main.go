@@ -8,9 +8,9 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/failfilin/otus_hw/service"
+	"github.com/failfilin/otus_hw/internal/service"
 
-	"github.com/failfilin/otus_hw/models"
+	"github.com/failfilin/otus_hw/internal/models"
 )
 
 func main() {

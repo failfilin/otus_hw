@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/failfilin/otus_hw/models"
-	"github.com/failfilin/otus_hw/repository"
+	"github.com/failfilin/otus_hw/internal/models"
+	"github.com/failfilin/otus_hw/internal/repository"
 )
 
 func NewEventConsumer(ctx context.Context, EatTypeChannel <-chan models.EatType, done chan<- struct{}, wg *sync.WaitGroup) {
