@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"otus/models"
-	"otus/service"
 	"sync"
 	"syscall"
+
+	"github.com/failfilin/otus_hw/service"
+
+	"github.com/failfilin/otus_hw/models"
 )
 
 func main() {

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"otus/models"
+	"github.com/failfilin/otus_hw/models"
 )
 
 var RestSlice models.SafeSlice[models.Restaurant]

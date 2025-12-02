@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
-	"otus/models"
-	"otus/repository"
 	"sync"
+
+	"github.com/failfilin/otus_hw/models"
+	"github.com/failfilin/otus_hw/repository"
 )
 
 func NewEventConsumer(ctx context.Context, EatTypeChannel <-chan models.EatType, done chan<- struct{}, wg *sync.WaitGroup) {

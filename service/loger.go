@@ -3,9 +3,10 @@ package service
 import (
 	"context"
 	"log"
-	"otus/repository"
 	"sync"
 	"time"
+
+	"github.com/failfilin/otus_hw/repository"
 )
 
 func Logger(ctx context.Context, done <-chan struct{}, wg *sync.WaitGroup) {

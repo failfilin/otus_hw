@@ -1,4 +1,4 @@
-module otus
+module github.com/failfilin/otus_hw
 
 go 1.21.4
 

@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"math/rand"
-	"otus/models"
 	"sync"
+
+	"github.com/failfilin/otus_hw/models"
 
 	"github.com/google/uuid"
 )
