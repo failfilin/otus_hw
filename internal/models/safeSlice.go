@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"path/filepath"
 	"sync"
 )
 
@@ -21,6 +22,9 @@ func (safeSl *SafeSlice[T]) Append(eat T) error {
 }
 
 func (safeSl *SafeSlice[T]) saveToFile() error {
+	if err := os.MkdirAll(filepath.Dir(safeSl.File), 0755); err != nil {
+		return err
+	}
 	file, err := os.Create(safeSl.File)
 	if err != nil {
 		return err
