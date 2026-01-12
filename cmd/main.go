@@ -8,6 +8,7 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/failfilin/otus_hw/internal/repository"
 	"github.com/failfilin/otus_hw/internal/service"
 
 	"github.com/failfilin/otus_hw/internal/models"
@@ -16,7 +17,7 @@ import (
 func main() {
 	var count int
 	var wgProduce, wgConsume, wgLogger sync.WaitGroup
-
+	repository.InitRepository()
 	channel := make(chan models.EatType)
 	doneChannel := make(chan struct{})
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)

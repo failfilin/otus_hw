@@ -7,20 +7,20 @@ import (
 )
 
 type Dish struct {
-	Id       int
-	MenuID   uuid.UUID
-	Name     string
-	Compound string
-	Macros   Macros
-	Price    float32
-	Category string //
+	Id       int       `json:"id"`
+	MenuID   uuid.UUID `json:"menuId"`
+	Name     string    `json:"name"`
+	Compound string    `json:"compound"`
+	Macros   Macros    `json:"macros"`
+	Price    float32   `json:"price"`
+	Category string    `json:"category"`
 }
 
 type Macros struct {
-	Calories      float32
-	Proteins      float32
-	Fats          float32
-	Carbohydrates float32
+	Calories      float32 `json:"calories"`
+	Proteins      float32 `json:"proteins"`
+	Fats          float32 `json:"fats"`
+	Carbohydrates float32 `json:"carbohydrates"`
 }
 
 func (dish Dish) String() string {

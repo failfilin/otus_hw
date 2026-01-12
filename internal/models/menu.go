@@ -7,11 +7,11 @@ import (
 )
 
 type Menu struct {
-	Id           uuid.UUID
-	RestaurantId uuid.UUID
-	Description  string
-	Active       bool
-	DishList     []Dish
+	Id           uuid.UUID `json:"id"`
+	RestaurantId uuid.UUID `json:"restaurantId"`
+	Description  string    `json:"description"`
+	Active       bool      `json:"active"`
+	DishList     []Dish    `json:"dishList"`
 }
 
 func (menu Menu) String() string {

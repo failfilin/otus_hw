@@ -7,11 +7,11 @@ import (
 )
 
 type Restaurant struct {
-	Id       uuid.UUID
-	Name     string
-	Logo     string // ссылка на CDN с картинкой
-	MenuList []Menu
-	active   bool
+	Id       uuid.UUID `json:"id"`
+	Name     string    `json:"name"`
+	Logo     string    `json:"logo"` // ссылка на CDN с картинкой
+	MenuList []Menu    `json:"menuList"`
+	active   bool      `json:"active"`
 }
 
 func (res *Restaurant) ChangeActive() {
