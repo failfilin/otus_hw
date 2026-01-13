@@ -22,13 +22,12 @@ func main() {
 	doneChannel := make(chan struct{})
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
-
 	fmt.Println("Введи количество итераций")
 	fmt.Fscan(os.Stdin, &count)
+	wgLogger.Add(1)
+	go service.Logger(ctx, doneChannel, &wgLogger, repository.RestSlice.Length(), repository.DishSlice.Length(), repository.MenuSlice.Length())
 	wgConsume.Add(1)
 	go service.NewEventConsumer(ctx, channel, doneChannel, &wgConsume)
-	wgLogger.Add(1)
-	go service.Logger(ctx, doneChannel, &wgLogger)
 	for i := count; i > 0; i-- {
 		select {
 		case <-ctx.Done():
