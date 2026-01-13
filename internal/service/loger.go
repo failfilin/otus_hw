@@ -9,11 +9,11 @@ import (
 	"github.com/failfilin/otus_hw/internal/repository"
 )
 
-func Logger(ctx context.Context, done <-chan struct{}, wg *sync.WaitGroup) {
+func Logger(ctx context.Context, done <-chan struct{}, wg *sync.WaitGroup, RestStart int, DishStart int, MenuStart int) {
 	defer wg.Done()
-	restState := 0
-	dishState := 0
-	menuState := 0
+	restState := RestStart
+	dishState := DishStart
+	menuState := MenuStart
 
 	ticker := time.NewTicker(200 * time.Millisecond)
 	defer ticker.Stop()
