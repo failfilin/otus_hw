@@ -14,20 +14,17 @@ var DishSlice = models.SafeSlice[models.Dish]{
 	File: "data/dishes.json",
 }
 
-func InitRepository() {
-	_ = RestSlice.LoadFromFile()
-	_ = MenuSlice.LoadFromFile()
-	_ = DishSlice.LoadFromFile()
-}
-
 func AddSlice(i models.EatType) {
 	switch v := i.(type) {
 	case models.Restaurant:
 		RestSlice.Append(v)
+		SaveToFile(&RestSlice)
 	case models.Menu:
 		MenuSlice.Append(v)
+		SaveToFile(&MenuSlice)
 	case models.Dish:
 		DishSlice.Append(v)
+		SaveToFile(&DishSlice)
 	}
 
 }
