@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 
 	"github.com/failfilin/otus_hw/internal/repository"
+	"github.com/failfilin/otus_hw/internal/server"
 	"github.com/failfilin/otus_hw/internal/service"
 
 	"github.com/failfilin/otus_hw/internal/models"
@@ -21,6 +23,11 @@ func main() {
 	channel := make(chan models.EatType)
 	doneChannel := make(chan struct{})
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	srv := server.New() // Создаем новый сервер
+	if err := srv.Run(ctx, ":8080"); err != nil {
+		log.Fatalf("Server error: %v", err)
+	}
+
 	defer stop()
 	fmt.Println("Введи количество итераций")
 	fmt.Fscan(os.Stdin, &count)

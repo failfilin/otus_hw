@@ -3,6 +3,8 @@ package models
 import (
 	"log"
 	"sync"
+
+	"github.com/google/uuid"
 )
 
 type SafeSlice[T EatType] struct {
@@ -34,4 +36,29 @@ func (safeSl *SafeSlice[T]) LogNewElements(state *int, printertype string) {
 		}
 		*state = safeSl.Length()
 	}
+}
+
+func (s *SafeSlice[T]) GetByID(id uuid.UUID) (*T, bool) {
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+	var zero T
+	for i := range s.Slice {
+		if s.Slice[i].GetID() == id {
+			return &s.Slice[i], true // <-- возвращаем указатель на элемент внутри среза
+		}
+	}
+	return &zero, false
+}
+
+func (s *SafeSlice[T]) RemoveByID(id uuid.UUID) bool {
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+
+	for i, item := range s.Slice {
+		if item.GetID() == id {
+			s.Slice = append(s.Slice[:i], s.Slice[i+1:]...)
+			return true
+		}
+	}
+	return false
 }
