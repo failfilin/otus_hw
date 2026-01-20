@@ -26,3 +26,6 @@ type Macros struct {
 func (dish Dish) String() string {
 	return fmt.Sprintf("%v", dish.Id)
 }
+func (r Dish) GetID() any {
+	return r.Id
+}
