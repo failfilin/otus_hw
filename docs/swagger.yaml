@@ -1,0 +1,243 @@
+basePath: /api
+definitions:
+  models.Dish:
+    properties:
+      category:
+        type: string
+      compound:
+        type: string
+      id:
+        type: integer
+      macros:
+        $ref: '#/definitions/models.Macros'
+      menuId:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  models.Macros:
+    properties:
+      calories:
+        type: number
+      carbohydrates:
+        type: number
+      fats:
+        type: number
+      proteins:
+        type: number
+    type: object
+  models.Menu:
+    properties:
+      active:
+        type: boolean
+      description:
+        type: string
+      dishList:
+        items:
+          $ref: '#/definitions/models.Dish'
+        type: array
+      id:
+        type: string
+      restaurantId:
+        type: string
+    type: object
+  models.Restaurant:
+    properties:
+      active:
+        type: boolean
+      id:
+        type: string
+      logo:
+        description: ссылка на CDN с картинкой
+        type: string
+      menuList:
+        items:
+          $ref: '#/definitions/models.Menu'
+        type: array
+      name:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Simple REST API for restaurants
+  title: Restaurants API
+  version: "1.0"
+paths:
+  /dishes:
+    get:
+      description: Returns list of all dishes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Dish'
+            type: array
+      summary: Get all dishes
+      tags:
+      - dishes
+  /menus:
+    get:
+      description: Returns list of all menus
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Menu'
+            type: array
+      summary: Get all menus
+      tags:
+      - menus
+  /restaurants:
+    get:
+      description: Returns list of all restaurants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Restaurant'
+            type: array
+      summary: Get all restaurants
+      tags:
+      - restaurants
+    post:
+      consumes:
+      - application/json
+      description: Create new restaurant and return generated ID
+      parameters:
+      - description: Restaurant payload
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/models.Restaurant'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Generated restaurant ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid JSON or missing fields
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create restaurant
+      tags:
+      - restaurants
+  /restaurants/{id}:
+    delete:
+      description: Delete restaurant by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+        "404":
+          description: Restaurant not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Delete restaurant
+      tags:
+      - restaurants
+    get:
+      description: Returns restaurant by its ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Restaurant'
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+        "404":
+          description: Restaurant not found
+          schema:
+            type: string
+      summary: Get restaurant by ID
+      tags:
+      - restaurants
+    put:
+      consumes:
+      - application/json
+      description: Update restaurant fields by ID
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated restaurant fields
+        in: body
+        name: restaurant
+        required: true
+        schema:
+          $ref: '#/definitions/models.Restaurant'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Restaurant updated
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID or JSON
+          schema:
+            type: string
+        "404":
+          description: Restaurant not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update restaurant
+      tags:
+      - restaurants
+swagger: "2.0"
