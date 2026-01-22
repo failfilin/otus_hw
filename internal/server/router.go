@@ -1,6 +1,10 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+
+	httpSwagger "github.com/swaggo/http-swagger"
+)
 
 func (s *Server) routes() {
 	apiMux := http.NewServeMux()
@@ -12,4 +16,8 @@ func (s *Server) routes() {
 	apiMux.HandleFunc("GET /menus", s.handleMenus)
 	apiMux.HandleFunc("GET /dishes", s.handleDishes)
 	s.mux.Handle("/api/", http.StripPrefix("/api", apiMux))
+	swaggerMux := http.NewServeMux()
+	swaggerMux.Handle("/", httpSwagger.WrapHandler)
+	s.mux.Handle("/swagger/", httpSwagger.WrapHandler)
+
 }

@@ -13,9 +13,15 @@ import (
 	"github.com/failfilin/otus_hw/internal/server"
 	"github.com/failfilin/otus_hw/internal/service"
 
+	_ "github.com/failfilin/otus_hw/docs"
+
 	"github.com/failfilin/otus_hw/internal/models"
 )
 
+// @title           Restaurants API
+// @version         1.0
+// @description     Simple REST API for restaurants
+// @BasePath        /api
 func main() {
 	var count int
 	var wgProduce, wgConsume, wgLogger sync.WaitGroup
