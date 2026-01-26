@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package restaurants;
+
+option go_package = "github.com/failfilin/otus_hw/internal/grpc/proto;restaurant";
+import "google/protobuf/empty.proto";
+
+// Макроэлементы для блюда
+message Macros {
+  float calories = 1;
+  float proteins = 2;
+  float fats = 3;
+  float carbohydrates = 4;
+}
+
+// Блюдо
+message Dish {
+  int32 id = 1;                      // id
+  string menu_id = 2;                // uuid
+  string name = 3;
+  string compound = 4;
+  Macros macros = 5;
+  float price = 6;
+  string category = 7;
+}
+
+// Меню
+message Menu {
+  string id = 1;                     // uuid
+  string restaurant_id = 2;          // uuid
+  string description = 3;
+  bool active = 4;
+  repeated Dish dish_list = 5;
+}
+
+// Ресторан
+message Restaurant {
+  string id = 1;                     // uuid
+  string name = 2;
+  string logo = 3;
+  repeated Menu menu_list = 4;
+  bool active = 5;
+}
+
+// ==============
+// Запросы/ответы
+// ==============
+
+message RestaurantIdRequest { string id = 1; }
+message MenuIdRequest { string id = 1; }
+message DishIdRequest { int32 id = 1; }
+
+message CreateRestaurantRequest {
+  string name = 1;
+  string logo = 2;
+  repeated Menu menu_list = 3;
+  bool active = 4;
+}
+message UpdateRestaurantRequest {
+  string id = 1;
+  Restaurant restaurant = 2;
+}
+message IdReply { string id = 1; }
+message MessageReply { string message = 1; }
+
+message RestaurantList { repeated Restaurant restaurants = 1; }
+message MenuList { repeated Menu menus = 1; }
+message DishList { repeated Dish dishes = 1; }
+
+// ==============
+// Сервисы
+// ==============
+
+service RestaurantService {
+  rpc GetRestaurants     (google.protobuf.Empty)     returns (RestaurantList);
+  rpc GetRestaurantById  (RestaurantIdRequest)       returns (Restaurant);
+  rpc CreateRestaurant   (CreateRestaurantRequest)    returns (IdReply);
+  rpc UpdateRestaurant   (UpdateRestaurantRequest)    returns (MessageReply);
+  rpc DeleteRestaurant   (RestaurantIdRequest)        returns (MessageReply);
+}
+
+service MenuService {
+  rpc GetMenus   (google.protobuf.Empty)  returns (MenuList);
+}
+
+service DishService {
+  rpc GetDishes  (google.protobuf.Empty)  returns (DishList);
+}

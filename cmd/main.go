@@ -9,6 +9,7 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/failfilin/otus_hw/internal/grpc/gserver"
 	"github.com/failfilin/otus_hw/internal/repository"
 	"github.com/failfilin/otus_hw/internal/server"
 	"github.com/failfilin/otus_hw/internal/service"
@@ -29,6 +30,14 @@ func main() {
 	channel := make(chan models.EatType)
 	doneChannel := make(chan struct{})
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	addr := ":50051"
+
+	log.Println("Starting gRPC server on", addr)
+
+	if err := gserver.Run(addr); err != nil {
+		log.Fatal(err)
+	}
+
 	srv := server.New() // Создаем новый сервер
 	if err := srv.Run(ctx, ":8080"); err != nil {
 		log.Fatalf("Server error: %v", err)
