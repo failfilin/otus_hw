@@ -7,7 +7,7 @@ import (
 )
 
 type Restaurant struct {
-	Id       uuid.UUID `json:"id"`
+	Id       uuid.UUID `json:"id" swaggertype:"string" format:"uuid"`
 	Name     string    `json:"name"`
 	Logo     string    `json:"logo"` // ссылка на CDN с картинкой
 	MenuList []Menu    `json:"menuList"`

@@ -7,6 +7,7 @@ import (
 	"github.com/failfilin/otus_hw/internal/models"
 	"github.com/failfilin/otus_hw/internal/repository"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func writeJSON(w http.ResponseWriter, v any) {
@@ -117,7 +118,7 @@ func (s *Server) handleDeleteByIDRestaurants(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "something bad", http.StatusNotFound)
 		return
 	}
-	repository.SaveToFile(&repository.RestSlice)
+	repository.DeleteDocument(repository.CollectionRestaurants, bson.D{{Key: "id", Value: id.String()}})
 	writeJSON(w, map[string]string{
 		"message": "All Done",
 	})
@@ -168,7 +169,11 @@ func (s *Server) handleChangeByIdRestaurants(w http.ResponseWriter, r *http.Requ
 		&payload.Active,
 	)
 
-	if err := repository.SaveToFile(&repository.RestSlice); err != nil {
+	if err := repository.UpdateDocument(
+		repository.CollectionRestaurants,
+		bson.D{{Key: "id", Value: id.String()}},
+		bson.D{{Key: "$set", Value: rest}},
+	); err != nil {
 		http.Error(w, "Oops not work, try again", http.StatusInternalServerError)
 		return
 	}
@@ -206,13 +211,11 @@ func (s *Server) AddNewRestaurants(w http.ResponseWriter, r *http.Request) {
 
 	repository.RestSlice.Append(payload)
 
-	// Сохраняем изменения в файл
-	if err := repository.SaveToFile(&repository.RestSlice); err != nil {
-		http.Error(w, "failed to save file", http.StatusInternalServerError)
+	if err := repository.InsertDocument(repository.CollectionRestaurants, payload); err != nil {
+		http.Error(w, "failed to save to database", http.StatusInternalServerError)
 		return
 	}
 
-	// Возвращаем Id созданного ресторан
 	writeJSON(w, map[string]string{
 		"id": payload.Id.String(),
 	})

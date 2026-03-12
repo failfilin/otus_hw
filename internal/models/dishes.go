@@ -8,7 +8,7 @@ import (
 
 type Dish struct {
 	Id       int       `json:"id"`
-	MenuID   uuid.UUID `json:"menuId"`
+	MenuID   uuid.UUID `json:"menuId" swaggertype:"string" format:"uuid"`
 	Name     string    `json:"name"`
 	Compound string    `json:"compound"`
 	Macros   Macros    `json:"macros"`

@@ -10,7 +10,6 @@ import (
 type SafeSlice[T EatType] struct {
 	Mu    sync.Mutex
 	Slice []T
-	File  string
 }
 
 func (safeSl *SafeSlice[T]) Append(eat T) {

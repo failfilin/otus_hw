@@ -298,7 +298,8 @@ const docTemplate = `{
                     "$ref": "#/definitions/models.Macros"
                 },
                 "menuId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "name": {
                     "type": "string"
@@ -341,10 +342,12 @@ const docTemplate = `{
                     }
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "restaurantId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 }
             }
         },
@@ -355,7 +358,8 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "logo": {
                     "description": "ссылка на CDN с картинкой",
@@ -385,6 +389,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "Simple REST API for restaurants",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {

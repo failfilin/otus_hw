@@ -291,7 +291,8 @@
                     "$ref": "#/definitions/models.Macros"
                 },
                 "menuId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "name": {
                     "type": "string"
@@ -334,10 +335,12 @@
                     }
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "restaurantId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 }
             }
         },
@@ -348,7 +351,8 @@
                     "type": "boolean"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "logo": {
                     "description": "ссылка на CDN с картинкой",

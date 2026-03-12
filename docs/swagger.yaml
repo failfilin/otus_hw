@@ -11,6 +11,7 @@ definitions:
       macros:
         $ref: '#/definitions/models.Macros'
       menuId:
+        format: uuid
         type: string
       name:
         type: string
@@ -39,8 +40,10 @@ definitions:
           $ref: '#/definitions/models.Dish'
         type: array
       id:
+        format: uuid
         type: string
       restaurantId:
+        format: uuid
         type: string
     type: object
   models.Restaurant:
@@ -48,6 +51,7 @@ definitions:
       active:
         type: boolean
       id:
+        format: uuid
         type: string
       logo:
         description: ссылка на CDN с картинкой
