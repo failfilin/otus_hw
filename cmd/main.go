@@ -15,10 +15,14 @@ import (
 
 // @title           Restaurants API
 // @version         1.0
-// @description     Simple REST API for restaurants
+// @descriptionТы     Simple REST API for restaurants
 // @BasePath        /api
 func main() {
-	repository.InitRepository()
+	if err := repository.InitPostgres(); err != nil {
+		log.Fatalf("Failed to connect to PostgreSQL: %v", err)
+	}
+	repository.LoadCollectionsFromPostgres()
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 

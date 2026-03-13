@@ -2,16 +2,20 @@ package models
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type Restaurant struct {
-	Id       uuid.UUID `json:"id" swaggertype:"string" format:"uuid"`
-	Name     string    `json:"name"`
-	Logo     string    `json:"logo"` // ссылка на CDN с картинкой
-	MenuList []Menu    `json:"menuList"`
-	Active   bool      `json:"active"`
+	Id        uuid.UUID `json:"id" swaggertype:"string" format:"uuid"`
+	Name      string    `json:"name"`
+	Logo      string    `json:"logo"` // ссылка на CDN с картинкой
+	Phone     string    `json:"phone"`
+	Address   string    `json:"address"`
+	MenuList  []Menu    `json:"menuList"`
+	Active    bool      `json:"active"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 func (res *Restaurant) ChangeActive() {

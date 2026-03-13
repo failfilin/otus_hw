@@ -7,7 +7,6 @@ import (
 	"github.com/failfilin/otus_hw/internal/models"
 	"github.com/failfilin/otus_hw/internal/repository"
 	"github.com/google/uuid"
-	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func writeJSON(w http.ResponseWriter, v any) {
@@ -39,22 +38,17 @@ func (s *Server) handleAllRestaurants(w http.ResponseWriter, r *http.Request) {
 // @Failure      404 {string} string "Restaurant not found"
 // @Router       /restaurants/{id} [get]
 func (s *Server) handleByIdRestaurant(w http.ResponseWriter, r *http.Request) {
-
-	var rest *models.Restaurant
-	var ok bool
 	idStr := r.PathValue("id")
-
 	if idStr == "" {
 		http.Error(w, "id is required", http.StatusBadRequest)
 		return
 	}
-
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		http.Error(w, "invalid id", http.StatusBadRequest)
 		return
 	}
-	rest, ok = repository.RestSlice.GetByID(id)
+	rest, ok := repository.RestSlice.GetByID(id)
 	if !ok {
 		http.Error(w, "restaurant not found", http.StatusNotFound)
 		return
@@ -100,28 +94,26 @@ func (s *Server) handleDishes(w http.ResponseWriter, r *http.Request) {
 // @Failure      500 {string} string "Internal server error"
 // @Router       /restaurants/{id} [delete]
 func (s *Server) handleDeleteByIDRestaurants(w http.ResponseWriter, r *http.Request) {
-	var ok bool
 	idStr := r.PathValue("id")
-
 	if idStr == "" {
 		http.Error(w, "id is required", http.StatusBadRequest)
 		return
 	}
-
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		http.Error(w, "invalid id", http.StatusBadRequest)
 		return
 	}
-	ok = repository.RestSlice.RemoveByID(id)
+	ok := repository.RestSlice.RemoveByID(id)
 	if !ok {
-		http.Error(w, "something bad", http.StatusNotFound)
+		http.Error(w, "restaurant not found", http.StatusNotFound)
 		return
 	}
-	repository.DeleteDocument(repository.CollectionRestaurants, bson.D{{Key: "id", Value: id.String()}})
-	writeJSON(w, map[string]string{
-		"message": "All Done",
-	})
+	if err := repository.PgDeleteRestaurant(id); err != nil {
+		http.Error(w, "failed to delete from database", http.StatusInternalServerError)
+		return
+	}
+	writeJSON(w, map[string]string{"message": "All Done"})
 }
 
 // handleChangeByIdRestaurants godoc
@@ -143,7 +135,6 @@ func (s *Server) handleChangeByIdRestaurants(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "id is required", http.StatusBadRequest)
 		return
 	}
-
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		http.Error(w, "invalid id", http.StatusBadRequest)
@@ -169,12 +160,8 @@ func (s *Server) handleChangeByIdRestaurants(w http.ResponseWriter, r *http.Requ
 		&payload.Active,
 	)
 
-	if err := repository.UpdateDocument(
-		repository.CollectionRestaurants,
-		bson.D{{Key: "id", Value: id.String()}},
-		bson.D{{Key: "$set", Value: rest}},
-	); err != nil {
-		http.Error(w, "Oops not work, try again", http.StatusInternalServerError)
+	if err := repository.PgUpdateRestaurant(*rest); err != nil {
+		http.Error(w, "failed to update database", http.StatusInternalServerError)
 		return
 	}
 
@@ -193,30 +180,25 @@ func (s *Server) handleChangeByIdRestaurants(w http.ResponseWriter, r *http.Requ
 // @Failure      500 {string} string "Internal server error"
 // @Router       /restaurants [post]
 func (s *Server) AddNewRestaurants(w http.ResponseWriter, r *http.Request) {
-
 	var payload models.Restaurant
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "invalid JSON", http.StatusBadRequest)
 		return
 	}
-
 	if payload.Name == "" {
 		http.Error(w, "name is required", http.StatusBadRequest)
 		return
 	}
 
 	payload.Id = uuid.New()
-
 	payload.Active = false
 
-	repository.RestSlice.Append(payload)
-
-	if err := repository.InsertDocument(repository.CollectionRestaurants, payload); err != nil {
+	if err := repository.PgInsertRestaurant(payload); err != nil {
 		http.Error(w, "failed to save to database", http.StatusInternalServerError)
 		return
 	}
 
-	writeJSON(w, map[string]string{
-		"id": payload.Id.String(),
-	})
+	repository.RestSlice.Append(payload)
+
+	writeJSON(w, map[string]string{"id": payload.Id.String()})
 }
