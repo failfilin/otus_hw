@@ -7,8 +7,8 @@ import (
 )
 
 type Dish struct {
-	Id       int       `json:"id"`
-	MenuID   uuid.UUID `json:"menuId"`
+	Id       uuid.UUID `json:"id" swaggertype:"string" format:"uuid"`
+	MenuID   uuid.UUID `json:"menuId" swaggertype:"string" format:"uuid"`
 	Name     string    `json:"name"`
 	Compound string    `json:"compound"`
 	Macros   Macros    `json:"macros"`
@@ -26,6 +26,25 @@ type Macros struct {
 func (dish Dish) String() string {
 	return fmt.Sprintf("%v", dish.Id)
 }
+
 func (r Dish) GetID() any {
 	return r.Id
+}
+
+func (d *Dish) Update(name, compound *string, price *float32, category *string, macros *Macros) {
+	if name != nil {
+		d.Name = *name
+	}
+	if compound != nil {
+		d.Compound = *compound
+	}
+	if price != nil {
+		d.Price = *price
+	}
+	if category != nil {
+		d.Category = *category
+	}
+	if macros != nil {
+		d.Macros = *macros
+	}
 }

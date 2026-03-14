@@ -1,4 +1,6 @@
 .DS_Store
+.env
 data/dishes.json
 data/menu.json
 data/restaurant.json
+internal/server/data/restaurant.json

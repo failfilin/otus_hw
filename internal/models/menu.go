@@ -7,8 +7,8 @@ import (
 )
 
 type Menu struct {
-	Id           uuid.UUID `json:"id"`
-	RestaurantId uuid.UUID `json:"restaurantId"`
+	Id           uuid.UUID `json:"id" swaggertype:"string" format:"uuid"`
+	RestaurantId uuid.UUID `json:"restaurantId" swaggertype:"string" format:"uuid"`
 	Description  string    `json:"description"`
 	Active       bool      `json:"active"`
 	DishList     []Dish    `json:"dishList"`
@@ -21,4 +21,13 @@ func (menu Menu) String() string {
 
 func (r Menu) GetID() any {
 	return r.Id
+}
+
+func (m *Menu) Update(description *string, active *bool) {
+	if description != nil {
+		m.Description = *description
+	}
+	if active != nil {
+		m.Active = *active
+	}
 }

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"sync"
 
 	"github.com/google/uuid"
@@ -10,7 +9,6 @@ import (
 type SafeSlice[T EatType] struct {
 	Mu    sync.Mutex
 	Slice []T
-	File  string
 }
 
 func (safeSl *SafeSlice[T]) Append(eat T) {
@@ -25,26 +23,13 @@ func (safeSl *SafeSlice[T]) Length() int {
 	return len(safeSl.Slice)
 }
 
-func (safeSl *SafeSlice[T]) ReturnElement(i int) EatType {
-	return safeSl.Slice[i]
-}
-
-func (safeSl *SafeSlice[T]) LogNewElements(state *int, printertype string) {
-	if *state < safeSl.Length() {
-		for i := *state; i < safeSl.Length(); i++ {
-			log.Println("Новый тип", printertype, safeSl.Slice[i])
-		}
-		*state = safeSl.Length()
-	}
-}
-
 func (s *SafeSlice[T]) GetByID(id uuid.UUID) (*T, bool) {
 	s.Mu.Lock()
 	defer s.Mu.Unlock()
 	var zero T
 	for i := range s.Slice {
 		if s.Slice[i].GetID() == id {
-			return &s.Slice[i], true // <-- возвращаем указатель на элемент внутри среза
+			return &s.Slice[i], true
 		}
 	}
 	return &zero, false
@@ -61,4 +46,21 @@ func (s *SafeSlice[T]) RemoveByID(id uuid.UUID) bool {
 		}
 	}
 	return false
+}
+
+func (s *SafeSlice[T]) RemoveWhere(predicate func(T) bool) int {
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+
+	removed := 0
+	result := make([]T, 0, len(s.Slice))
+	for _, item := range s.Slice {
+		if predicate(item) {
+			removed++
+		} else {
+			result = append(result, item)
+		}
+	}
+	s.Slice = result
+	return removed
 }

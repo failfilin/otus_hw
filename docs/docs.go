@@ -15,6 +15,110 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Get JWT token by credentials",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JWT token",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid JSON",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/cart": {
+            "post": {
+                "description": "Save a cart (no auth required). Calculates total if status is closed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cart"
+                ],
+                "summary": "Save cart",
+                "parameters": [
+                    {
+                        "description": "Cart payload",
+                        "name": "cart",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaveCartRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Generated cart ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid JSON",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Restaurant not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/dishes": {
             "get": {
                 "description": "Returns list of all dishes",
@@ -33,6 +137,170 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.Dish"
                             }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create new dish for a menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "Create dish",
+                "parameters": [
+                    {
+                        "description": "Dish payload",
+                        "name": "dish",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateDishRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Generated dish ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid JSON or missing fields",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Menu not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/dishes/{id}": {
+            "get": {
+                "description": "Returns dish by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "Get dish by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dish ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Dish"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Dish not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update dish fields by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dishes"
+                ],
+                "summary": "Update dish",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Dish ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated dish fields",
+                        "name": "dish",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateDishRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or JSON",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Dish not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -56,6 +324,178 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.Menu"
                             }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create new menu for a restaurant",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Create menu",
+                "parameters": [
+                    {
+                        "description": "Menu payload",
+                        "name": "menu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateMenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Generated menu ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid JSON",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Restaurant not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/menus/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update menu description and/or active status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Update menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated menu fields",
+                        "name": "menu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateMenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or JSON",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Menu not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete menu by ID along with all its dishes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Delete menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Menu ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Menu not found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -84,6 +524,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Create new restaurant and return generated ID",
                 "consumes": [
                     "application/json"
@@ -102,7 +547,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Restaurant"
+                            "$ref": "#/definitions/models.CreateRestaurantRequest"
                         }
                     }
                 ],
@@ -172,6 +617,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Update restaurant fields by ID",
                 "consumes": [
                     "application/json"
@@ -197,7 +647,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Restaurant"
+                            "$ref": "#/definitions/models.UpdateRestaurantRequest"
                         }
                     }
                 ],
@@ -232,7 +682,12 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete restaurant by ID",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete restaurant by ID with all its menus and dishes",
                 "produces": [
                     "application/json"
                 ],
@@ -270,9 +725,82 @@ const docTemplate = `{
                         "schema": {
                             "type": "string"
                         }
+                    }
+                }
+            }
+        },
+        "/restaurants/{id}/menu/active": {
+            "get": {
+                "description": "Returns the active menu for a restaurant including all its dishes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Get active menu for restaurant with dishes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Menu"
+                        }
                     },
-                    "500": {
-                        "description": "Internal server error",
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "No active menu found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/restaurants/{id}/menus": {
+            "get": {
+                "description": "Returns all menus for a restaurant with active status (no dish list)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Get all menus for restaurant",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Restaurant ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Menu"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
                         "schema": {
                             "type": "string"
                         }
@@ -282,6 +810,64 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.CreateDishRequest": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "example": "Пицца"
+                },
+                "compound": {
+                    "type": "string",
+                    "example": "тесто, томат, моцарелла"
+                },
+                "macros": {
+                    "$ref": "#/definitions/models.MacrosRequest"
+                },
+                "menuId": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Маргарита"
+                },
+                "price": {
+                    "type": "number",
+                    "example": 590
+                }
+            }
+        },
+        "models.CreateMenuRequest": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Летнее меню"
+                },
+                "restaurantId": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                }
+            }
+        },
+        "models.CreateRestaurantRequest": {
+            "type": "object",
+            "properties": {
+                "logo": {
+                    "type": "string",
+                    "example": "https://cdn.example.com/logo.png"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Пицца у Тони"
+                }
+            }
+        },
         "models.Dish": {
             "type": "object",
             "properties": {
@@ -292,19 +878,34 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "macros": {
                     "$ref": "#/definitions/models.Macros"
                 },
                 "menuId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "name": {
                     "type": "string"
                 },
                 "price": {
                     "type": "number"
+                }
+            }
+        },
+        "models.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "kek"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "kek"
                 }
             }
         },
@@ -325,6 +926,27 @@ const docTemplate = `{
                 }
             }
         },
+        "models.MacrosRequest": {
+            "type": "object",
+            "properties": {
+                "calories": {
+                    "type": "number",
+                    "example": 350.5
+                },
+                "carbohydrates": {
+                    "type": "number",
+                    "example": 45
+                },
+                "fats": {
+                    "type": "number",
+                    "example": 8.7
+                },
+                "proteins": {
+                    "type": "number",
+                    "example": 12.3
+                }
+            }
+        },
         "models.Menu": {
             "type": "object",
             "properties": {
@@ -341,10 +963,12 @@ const docTemplate = `{
                     }
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "restaurantId": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 }
             }
         },
@@ -355,7 +979,8 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid"
                 },
                 "logo": {
                     "description": "ссылка на CDN с картинкой",
@@ -371,6 +996,95 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "models.SaveCartRequest": {
+            "type": "object",
+            "properties": {
+                "dishIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "550e8400-e29b-41d4-a716-446655440001",
+                        "550e8400-e29b-41d4-a716-446655440002"
+                    ]
+                },
+                "restaurantId": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "open",
+                        "closed"
+                    ],
+                    "example": "open"
+                }
+            }
+        },
+        "models.UpdateDishRequest": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "example": "Пицца"
+                },
+                "compound": {
+                    "type": "string",
+                    "example": "тесто, томат, моцарелла, базилик"
+                },
+                "macros": {
+                    "$ref": "#/definitions/models.MacrosRequest"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Маргарита Делюкс"
+                },
+                "price": {
+                    "type": "number",
+                    "example": 690
+                }
+            }
+        },
+        "models.UpdateMenuRequest": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Зимнее меню"
+                }
+            }
+        },
+        "models.UpdateRestaurantRequest": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "logo": {
+                    "type": "string",
+                    "example": "https://cdn.example.com/logo.png"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Пицца у Тони"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and the JWT token",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
@@ -385,6 +1099,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "Simple REST API for restaurants",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/failfilin/otus_hw/internal/repository"
 	"github.com/failfilin/otus_hw/internal/server"
+	"github.com/joho/godotenv"
 
 	_ "github.com/failfilin/otus_hw/docs"
 )
@@ -17,7 +18,14 @@ import (
 // @version         1.0
 // @description     Simple REST API for restaurants
 // @BasePath        /api
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and the JWT token
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using environment variables")
+	}
 	repository.InitRepository()
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

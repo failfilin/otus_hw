@@ -7,7 +7,7 @@ import (
 )
 
 type Restaurant struct {
-	Id       uuid.UUID `json:"id"`
+	Id       uuid.UUID `json:"id" swaggertype:"string" format:"uuid"`
 	Name     string    `json:"name"`
 	Logo     string    `json:"logo"` // ссылка на CDN с картинкой
 	MenuList []Menu    `json:"menuList"`
@@ -23,9 +23,6 @@ func (res *Restaurant) ChangeActive() {
 	}
 }
 
-func (res *Restaurant) GetActive() bool {
-	return res.Active
-}
 
 func (res Restaurant) String() string {
 	//return fmt.Sprintf("ID заведения: %v \nНазвание: %v \nСсыль на лого: %v \nСписок менюшек: %v \nСтатус активности заведения: %t", res.Id, res.Name, res.Logo, res.MenuList, res.GetActive())
