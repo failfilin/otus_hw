@@ -60,7 +60,7 @@ func TestAddSlice_Dish_AppendsToDishSlice(t *testing.T) {
 	clearAll()
 
 	dish := models.Dish{
-		Id:   1,
+		Id:   uuid.New(),
 		Name: "Pasta",
 	}
 

@@ -19,6 +19,7 @@ const (
 	CollectionRestaurants = "restaurants"
 	CollectionMenus       = "menus"
 	CollectionDishes      = "dishes"
+	CollectionCarts       = "carts"
 )
 
 var mongoDB *mongo.Database
@@ -133,6 +134,14 @@ func DeleteDocument(collection string, filter bson.D) error {
 	return err
 }
 
+func DeleteManyDocuments(collection string, filter bson.D) error {
+	if mongoDB == nil {
+		return nil
+	}
+	_, err := mongoDB.Collection(collection).DeleteMany(context.Background(), filter)
+	return err
+}
+
 func InitRepository() {
 	if err := InitMongo(); err != nil {
 		log.Fatalf("Failed to connect to MongoDB: %v", err)
@@ -149,5 +158,9 @@ func InitRepository() {
 	if err := loadCollection(CollectionDishes, &DishSlice); err != nil {
 		log.Printf("Warning: failed to load dishes: %v", err)
 		DishSlice.Slice = []models.Dish{}
+	}
+	if err := loadCollection(CollectionCarts, &CartSlice); err != nil {
+		log.Printf("Warning: failed to load carts: %v", err)
+		CartSlice.Slice = []models.Cart{}
 	}
 }

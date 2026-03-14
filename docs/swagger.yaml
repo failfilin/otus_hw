@@ -1,5 +1,46 @@
 basePath: /api
 definitions:
+  models.CreateDishRequest:
+    properties:
+      category:
+        example: Пицца
+        type: string
+      compound:
+        example: тесто, томат, моцарелла
+        type: string
+      macros:
+        $ref: '#/definitions/models.MacrosRequest'
+      menuId:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      name:
+        example: Маргарита
+        type: string
+      price:
+        example: 590
+        type: number
+    type: object
+  models.CreateMenuRequest:
+    properties:
+      active:
+        example: false
+        type: boolean
+      description:
+        example: Летнее меню
+        type: string
+      restaurantId:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+    type: object
+  models.CreateRestaurantRequest:
+    properties:
+      logo:
+        example: https://cdn.example.com/logo.png
+        type: string
+      name:
+        example: Пицца у Тони
+        type: string
+    type: object
   models.Dish:
     properties:
       category:
@@ -7,7 +48,8 @@ definitions:
       compound:
         type: string
       id:
-        type: integer
+        format: uuid
+        type: string
       macros:
         $ref: '#/definitions/models.Macros'
       menuId:
@@ -18,6 +60,15 @@ definitions:
       price:
         type: number
     type: object
+  models.LoginRequest:
+    properties:
+      password:
+        example: kek
+        type: string
+      username:
+        example: kek
+        type: string
+    type: object
   models.Macros:
     properties:
       calories:
@@ -27,6 +78,21 @@ definitions:
       fats:
         type: number
       proteins:
+        type: number
+    type: object
+  models.MacrosRequest:
+    properties:
+      calories:
+        example: 350.5
+        type: number
+      carbohydrates:
+        example: 45
+        type: number
+      fats:
+        example: 8.7
+        type: number
+      proteins:
+        example: 12.3
         type: number
     type: object
   models.Menu:
@@ -63,12 +129,137 @@ definitions:
       name:
         type: string
     type: object
+  models.SaveCartRequest:
+    properties:
+      dishIds:
+        example:
+        - 550e8400-e29b-41d4-a716-446655440001
+        - 550e8400-e29b-41d4-a716-446655440002
+        items:
+          type: string
+        type: array
+      restaurantId:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      status:
+        enum:
+        - open
+        - closed
+        example: open
+        type: string
+    type: object
+  models.UpdateDishRequest:
+    properties:
+      category:
+        example: Пицца
+        type: string
+      compound:
+        example: тесто, томат, моцарелла, базилик
+        type: string
+      macros:
+        $ref: '#/definitions/models.MacrosRequest'
+      name:
+        example: Маргарита Делюкс
+        type: string
+      price:
+        example: 690
+        type: number
+    type: object
+  models.UpdateMenuRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      description:
+        example: Зимнее меню
+        type: string
+    type: object
+  models.UpdateRestaurantRequest:
+    properties:
+      active:
+        example: true
+        type: boolean
+      logo:
+        example: https://cdn.example.com/logo.png
+        type: string
+      name:
+        example: Пицца у Тони
+        type: string
+    type: object
 info:
   contact: {}
   description: Simple REST API for restaurants
   title: Restaurants API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Get JWT token by credentials
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: JWT token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid JSON
+          schema:
+            type: string
+        "401":
+          description: Invalid credentials
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - auth
+  /cart:
+    post:
+      consumes:
+      - application/json
+      description: Save a cart (no auth required). Calculates total if status is closed.
+      parameters:
+      - description: Cart payload
+        in: body
+        name: cart
+        required: true
+        schema:
+          $ref: '#/definitions/models.SaveCartRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Generated cart ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid JSON
+          schema:
+            type: string
+        "404":
+          description: Restaurant not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Save cart
+      tags:
+      - cart
   /dishes:
     get:
       description: Returns list of all dishes
@@ -84,6 +275,112 @@ paths:
       summary: Get all dishes
       tags:
       - dishes
+    post:
+      consumes:
+      - application/json
+      description: Create new dish for a menu
+      parameters:
+      - description: Dish payload
+        in: body
+        name: dish
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateDishRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Generated dish ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid JSON or missing fields
+          schema:
+            type: string
+        "404":
+          description: Menu not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create dish
+      tags:
+      - dishes
+  /dishes/{id}:
+    get:
+      description: Returns dish by its ID
+      parameters:
+      - description: Dish ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Dish'
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+        "404":
+          description: Dish not found
+          schema:
+            type: string
+      summary: Get dish by ID
+      tags:
+      - dishes
+    put:
+      consumes:
+      - application/json
+      description: Update dish fields by ID
+      parameters:
+      - description: Dish ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated dish fields
+        in: body
+        name: dish
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateDishRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID or JSON
+          schema:
+            type: string
+        "404":
+          description: Dish not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update dish
+      tags:
+      - dishes
   /menus:
     get:
       description: Returns list of all menus
@@ -97,6 +394,116 @@ paths:
               $ref: '#/definitions/models.Menu'
             type: array
       summary: Get all menus
+      tags:
+      - menus
+    post:
+      consumes:
+      - application/json
+      description: Create new menu for a restaurant
+      parameters:
+      - description: Menu payload
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Generated menu ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid JSON
+          schema:
+            type: string
+        "404":
+          description: Restaurant not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Create menu
+      tags:
+      - menus
+  /menus/{id}:
+    delete:
+      description: Delete menu by ID along with all its dishes
+      parameters:
+      - description: Menu ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+        "404":
+          description: Menu not found
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Delete menu
+      tags:
+      - menus
+    put:
+      consumes:
+      - application/json
+      description: Update menu description and/or active status
+      parameters:
+      - description: Menu ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated menu fields
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID or JSON
+          schema:
+            type: string
+        "404":
+          description: Menu not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Update menu
       tags:
       - menus
   /restaurants:
@@ -124,7 +531,7 @@ paths:
         name: restaurant
         required: true
         schema:
-          $ref: '#/definitions/models.Restaurant'
+          $ref: '#/definitions/models.CreateRestaurantRequest'
       produces:
       - application/json
       responses:
@@ -142,12 +549,14 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Create restaurant
       tags:
       - restaurants
   /restaurants/{id}:
     delete:
-      description: Delete restaurant by ID
+      description: Delete restaurant by ID with all its menus and dishes
       parameters:
       - description: Restaurant ID
         in: path
@@ -171,10 +580,8 @@ paths:
           description: Restaurant not found
           schema:
             type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
+      security:
+      - BearerAuth: []
       summary: Delete restaurant
       tags:
       - restaurants
@@ -219,7 +626,7 @@ paths:
         name: restaurant
         required: true
         schema:
-          $ref: '#/definitions/models.Restaurant'
+          $ref: '#/definitions/models.UpdateRestaurantRequest'
       produces:
       - application/json
       responses:
@@ -241,7 +648,68 @@ paths:
           description: Internal server error
           schema:
             type: string
+      security:
+      - BearerAuth: []
       summary: Update restaurant
       tags:
       - restaurants
+  /restaurants/{id}/menu/active:
+    get:
+      description: Returns the active menu for a restaurant including all its dishes
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Menu'
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+        "404":
+          description: No active menu found
+          schema:
+            type: string
+      summary: Get active menu for restaurant with dishes
+      tags:
+      - menus
+  /restaurants/{id}/menus:
+    get:
+      description: Returns all menus for a restaurant with active status (no dish
+        list)
+      parameters:
+      - description: Restaurant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Menu'
+            type: array
+        "400":
+          description: Invalid ID
+          schema:
+            type: string
+      summary: Get all menus for restaurant
+      tags:
+      - menus
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and the JWT token
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

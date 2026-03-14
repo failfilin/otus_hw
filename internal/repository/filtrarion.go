@@ -7,6 +7,7 @@ import (
 var RestSlice = models.SafeSlice[models.Restaurant]{}
 var MenuSlice = models.SafeSlice[models.Menu]{}
 var DishSlice = models.SafeSlice[models.Dish]{}
+var CartSlice = models.SafeSlice[models.Cart]{}
 
 func AddSlice(i models.EatType) {
 	switch v := i.(type) {
@@ -19,5 +20,8 @@ func AddSlice(i models.EatType) {
 	case models.Dish:
 		DishSlice.Append(v)
 		InsertDocument(CollectionDishes, v)
+	case models.Cart:
+		CartSlice.Append(v)
+		InsertDocument(CollectionCarts, v)
 	}
 }

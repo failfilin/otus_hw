@@ -22,3 +22,12 @@ func (menu Menu) String() string {
 func (r Menu) GetID() any {
 	return r.Id
 }
+
+func (m *Menu) Update(description *string, active *bool) {
+	if description != nil {
+		m.Description = *description
+	}
+	if active != nil {
+		m.Active = *active
+	}
+}
