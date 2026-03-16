@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/failfilin/otus_hw/internal/service"
 	"github.com/failfilin/otus_hw/internal/repository"
 	"github.com/failfilin/otus_hw/internal/server"
 
@@ -22,7 +23,10 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	srv := server.New()
+	l := service.NewRedisLogger()
+	defer l.Close()
+
+	srv := server.New(l)
 	if err := srv.Run(ctx, ":8080"); err != nil {
 		log.Fatalf("Server error: %v", err)
 	}

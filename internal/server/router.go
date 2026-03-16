@@ -15,7 +15,7 @@ func (s *Server) routes() {
 	apiMux.HandleFunc("DELETE /restaurants/{id}", s.handleDeleteByIDRestaurants) //удаляет элемент
 	apiMux.HandleFunc("GET /menus", s.handleMenus)
 	apiMux.HandleFunc("GET /dishes", s.handleDishes)
-	s.mux.Handle("/api/", http.StripPrefix("/api", apiMux))
+	s.mux.Handle("/api/", loggingMiddleware(s.logger, http.StripPrefix("/api", apiMux)))
 	swaggerMux := http.NewServeMux()
 	swaggerMux.Handle("/", httpSwagger.WrapHandler)
 	s.mux.Handle("/swagger/", httpSwagger.WrapHandler)

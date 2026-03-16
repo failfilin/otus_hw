@@ -5,15 +5,23 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/failfilin/otus_hw/internal/service"
 )
 
 type Server struct {
-	mux *http.ServeMux
+	mux    *http.ServeMux
+	logger *service.RedisLogger
 }
 
-func New() *Server {
+func New(l ...*service.RedisLogger) *Server {
+	var rl *service.RedisLogger
+	if len(l) > 0 {
+		rl = l[0]
+	}
 	s := &Server{
-		mux: http.NewServeMux(),
+		mux:    http.NewServeMux(),
+		logger: rl,
 	}
 	s.routes()
 	return s
